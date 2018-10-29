@@ -33,6 +33,9 @@
     <OtherFlags>--warnon:1182</OtherFlags>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Argu, Version=5.1.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>packages\Argu\lib\net45\Argu.dll</HintPath>
+    </Reference>
     <Reference Include="basic, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>packages\ZFStar\tools\basic.dll</HintPath>
     </Reference>
@@ -56,8 +59,11 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="ASTUtils.fs" />
+    <Compile Include="ParametersData.fs" />
     <Compile Include="ModifyAST.fs" />
     <Compile Include="WitheredAST.fs" />
+    <Compile Include="ExtractParams.fs" />
+    <Compile Include="Program.fs" />
     <Content Include="paket.references" />
   </ItemGroup>
   <ItemGroup>

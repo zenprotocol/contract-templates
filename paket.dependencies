@@ -3,7 +3,9 @@ source https://www.nuget.org/api/v2
 
 framework: auto-detect
 
+nuget Argu 5.1.0
 nuget FSharp.Compiler.Tools 10.0.2
 nuget FSharp.Core 4.5.2
+nuget FSharp.Data 3.0.0
 nuget ZFStar 0.0.26
 nuget FSharpx.Extras 

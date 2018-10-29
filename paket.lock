@@ -2,10 +2,14 @@ GENERATE-LOAD-SCRIPTS: ON
 RESTRICTION: == net471
 NUGET
   remote: https://www.nuget.org/api/v2
+    Argu (5.1)
+      FSharp.Core (>= 4.0.0.1)
     FSharp.Compiler.Tools (10.0.2)
     FSharp.Control.AsyncSeq (2.0.21)
       FSharp.Core (>= 3.1.2)
     FSharp.Core (4.5.2)
+    FSharp.Data (3.0)
+      FSharp.Core (>= 4.0.0.1)
     FSharpx.Async (1.13.2)
       FSharp.Control.AsyncSeq
       FSharp.Core

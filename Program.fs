@@ -2,8 +2,6 @@ module Program
 
 open Argu
 
-let MSG_HELP = "Display this list of options."
-
 type CLIArgs =
     | [<CliPrefix(CliPrefix.None)>] Extract  of ParseResults<ExtractArgs>
     | [<CliPrefix(CliPrefix.None)>] Modify   of ParseResults<ModifyArgs>
@@ -77,7 +75,7 @@ let parse (argv : string[]) =
 let handle_extract_args (args : ParseResults<ExtractArgs>) =
     match args.TryGetResult ExtractArgs.Source_file with
     | None ->
-        printf "Source file wasn't specified"
+        printfn "Contract file wasn't specified"
     | Some src_filename ->
         let ast  = ASTUtils.parse_file src_filename
         let vf   = ViewFile.extractViewFile src_filename ast

@@ -63,5 +63,5 @@ let modify_modul (name : string) (newdata : paramsdata) (m : AST.modul) : AST.mo
     | AST.Module(lid, decs)       -> AST.Module(lid, List.map (modify_decl name newdata) decs) 
     | AST.Interface(lid, decs, b) -> AST.Interface(lid, List.map (modify_decl name newdata) decs, b)
 
-let modify_AST (name : string) (newdata : paramsdata) ((m, cmts) : AST) : AST =
+let modify_AST ((name,newdata) : string * paramsdata) ((m, cmts) : AST) : AST =
     (modify_modul name newdata m, cmts)

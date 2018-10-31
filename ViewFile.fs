@@ -62,9 +62,16 @@ let private paramsdata2valuetype (x : paramsdata) : string * string =
         ( sprintf "\"%s\"" s, "string")
     | CD_invalid -> ("INVALID", "INVALID")
 
-let private createParameter ((name, pd) : string * paramsdata) : Parameter =
+let private sp2param ((name, pd) : string * paramsdata) : Parameter =
     let vt = paramsdata2valuetype pd
     { _name = name; _value = fst vt; _type = snd vt}
+
+(*let private param2sp (param : Parameter) : string * paramsdata =
+    ( param._name
+    , match param._type with
+      | "bool" ->
+        match param._value with
+        | *)
 
 let extractViewFile (filename : string) (ast : ASTUtils.AST) : ViewFile = {
     _filename = filename;
@@ -75,7 +82,7 @@ let extractViewFile (filename : string) (ast : ASTUtils.AST) : ViewFile = {
         ).ident.idText;
     _parameters =
         ExtractParams.extractData ast
-        |> List.map createParameter
+        |> List.map sp2param
 }
 
 let private renderList (renderer : 'a -> string) (ls : 'a list) : string =
@@ -87,13 +94,13 @@ let private renderList (renderer : 'a -> string) (ls : 'a list) : string =
     sprintf "[%s]" (renderList' ls)
 
 let private renderParameter (param : Parameter) : string =
-    let name_field  = sprintf "%s : %s" KEY_NAME  param._name
-    let value_field = sprintf "%s : %s" KEY_VALUE param._value
-    let type_field  = sprintf "%s : %s" KEY_TYPE  param._type
+    let name_field  = sprintf "\"%s\" : \"%s\"" KEY_NAME  param._name
+    let value_field = sprintf "\"%s\" : %s" KEY_VALUE param._value
+    let type_field  = sprintf "\"%s\" : \"%s\"" KEY_TYPE  param._type
     sprintf "{ %s, %s, %s }" name_field value_field type_field
 
 let renderViewFile (vf : ViewFile) : string =
-    let filename_field      = sprintf "%s : %s" KEY_FILENAME      vf._filename
-    let contract_name_field = sprintf "%s : %s" KEY_CONTRACT_NAME vf._contract_name
-    let parameters_field    = sprintf "%s : %s" KEY_PARAMETERS    (renderList renderParameter vf._parameters)
+    let filename_field      = sprintf "\"%s\" : \"%s\"" KEY_FILENAME      vf._filename
+    let contract_name_field = sprintf "\"%s\" : \"%s\"" KEY_CONTRACT_NAME vf._contract_name
+    let parameters_field    = sprintf "\"%s\" : %s" KEY_PARAMETERS    (renderList renderParameter vf._parameters)
     sprintf "{ %s, %s, %s}" filename_field contract_name_field parameters_field

@@ -77,9 +77,11 @@ let handle_extract_args (args : ParseResults<ExtractArgs>) =
     | None ->
         printfn "Contract file wasn't specified"
     | Some src_filename ->
-        let ast  = ASTUtils.parse_file src_filename
-        let vf   = ViewFile.extractViewFile src_filename ast
-        let json = ViewFile.renderViewFile vf
+        let filename      = System.IO.Path.GetFileName src_filename
+        let contract_name = System.IO.Path.GetFileNameWithoutExtension src_filename
+        let ast           = ASTUtils.parse_file src_filename
+        let vf            = ViewFile.extractViewFile filename contract_name ast
+        let json          = ViewFile.renderViewFile vf
         match args.TryGetResult ExtractArgs.V with
         | None ->
             printfn "%s" json

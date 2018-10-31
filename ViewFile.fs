@@ -1,10 +1,5 @@
 module ViewFile
 
-//module EP = ExtractParams
-//open FSharp.Data
-
-module AST   = FStar.Parser.AST
-module Id    = FStar.Ident
 module Const = FStar.Const
 
 open ParametersData
@@ -66,21 +61,10 @@ let private sp2param ((name, pd) : string * paramsdata) : Parameter =
     let vt = paramsdata2valuetype pd
     { _name = name; _value = fst vt; _type = snd vt}
 
-(*let private param2sp (param : Parameter) : string * paramsdata =
-    ( param._name
-    , match param._type with
-      | "bool" ->
-        match param._value with
-        | *)
-
-let extractViewFile (filename : string) (ast : ASTUtils.AST) : ViewFile = {
-    _filename = filename;
-    _contract_name =
-        (match fst ast with
-        | AST.Module(lid,_)      -> lid
-        | AST.Interface(lid,_,_) -> lid
-        ).ident.idText;
-    _parameters =
+let extractViewFile (filename : string) (contract_name : string) (ast : ASTUtils.AST) : ViewFile = {
+    _filename      = filename;
+    _contract_name = contract_name
+    _parameters    =
         ExtractParams.extractData ast
         |> List.map sp2param
 }

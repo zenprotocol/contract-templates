@@ -74,8 +74,9 @@ let private renderList (renderer : 'a -> string) (ls : 'a list) : string =
         match xs' with
         | []         -> ""
         | [x]        -> renderer x
-        | x1::x2::xs -> sprintf "%s , %s" (renderer x1) (renderList' (x2::xs))
-    sprintf "[%s]" (renderList' ls)
+        //| x1::x2::xs -> sprintf "%s , %s" (renderer x1) (renderList' (x2::xs))
+        | x1::x2::xs -> sprintf "%s,\n\t\t%s" (renderer x1) (renderList' (x2::xs))
+    sprintf "[\n\t\t%s\n\t]" (renderList' ls)
 
 let private renderParameter (param : Parameter) : string =
     let name_field  = sprintf "\"%s\" : \"%s\"" KEY_NAME  param._name
@@ -86,5 +87,8 @@ let private renderParameter (param : Parameter) : string =
 let renderViewFile (vf : ViewFile) : string =
     let filename_field      = sprintf "\"%s\" : \"%s\"" KEY_FILENAME      vf._filename
     let contract_name_field = sprintf "\"%s\" : \"%s\"" KEY_CONTRACT_NAME vf._contract_name
-    let parameters_field    = sprintf "\"%s\" : %s" KEY_PARAMETERS    (renderList renderParameter vf._parameters)
-    sprintf "{ %s, %s, %s}" filename_field contract_name_field parameters_field
+    let parameters_field    = sprintf "\"%s\" : %s"     KEY_PARAMETERS    (renderList renderParameter vf._parameters)
+    //sprintf "{ %s, %s, %s}" filename_field contract_name_field parameters_field
+    sprintf "{\n\t%s,\n\t%s,\n\t%s\n}"
+        filename_field contract_name_field parameters_field
+    

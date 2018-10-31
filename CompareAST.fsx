@@ -1,7 +1,7 @@
 
 #r "bin/Debug/basic.dll"
 #r "bin/Debug/parser.dll"
-#r "bin/Debug/ZFS_Tools.dll"
+#r "bin/Debug/contract_templates.dll"
 
 module AST = FStar.Parser.AST
 

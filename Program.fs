@@ -63,17 +63,30 @@ let parse (argv : string[]) =
     with
         | :? Argu.ArguParseException -> None
 
-let handle_extract_arg arg =
-    match arg with
-    | ExtractArgs.Source_file(src_filename) -> printfn "Source file: %s" src_filename  
-    | ExtractArgs.V(view_filename)          -> printfn "View file: %s" view_filename
+//let handle_extract_arg arg =
+//    match arg with
+//    | ExtractArgs.Source_file(src_filename) ->
+//        let ast = ASTUtils.parse_file src_filename
+//        let vf = ViewFile.extractViewFile src_filename ast
+//        printfn "%s" (ViewFile.renderViewFile vf)
+//        //printfn "Source file: %s" src_filename  
+//    | ExtractArgs.V(view_filename)          -> printfn "View file: %s" view_filename
+//
+//let handle_extract_args' = List.fold (fun () -> handle_extract_arg) ()
 
-let handle_extract_args' = List.fold (fun () -> handle_extract_arg) ()
-
-let handle_extract_args args =
-    match args with
-    | []   -> extract_usage()
-    | _::_ -> handle_extract_args' args
+let handle_extract_args (args : ParseResults<ExtractArgs>) =
+    match args.TryGetResult ExtractArgs.Source_file with
+    | None ->
+        printf "Source file wasn't specified"
+    | Some src_filename ->
+        let ast  = ASTUtils.parse_file src_filename
+        let vf   = ViewFile.extractViewFile src_filename ast
+        let json = ViewFile.renderViewFile vf
+        match args.TryGetResult ExtractArgs.V with
+        | None ->
+            printfn "%s" json
+        | Some view_filename ->
+            System.IO.File.WriteAllText(view_filename, json)
 
 let handle_modify_arg arg =
     match arg with
@@ -105,7 +118,7 @@ let handle_generate_args args =
 
 let handle_cli_arg arg =
     match arg with
-    | Extract(args)  -> printfn "Extract:"  ; handle_extract_args  (args.GetAllResults())
+    | Extract(args)  -> printfn "Extract:"  ; handle_extract_args  args
     | Modify(args)   -> printfn "Modify:"   ; handle_modify_args   (args.GetAllResults())
     | Generate(args) -> printfn "Generate:" ; handle_generate_args (args.GetAllResults())
 

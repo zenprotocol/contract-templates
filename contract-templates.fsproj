@@ -42,6 +42,9 @@
     <Reference Include="extraction, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>packages\ZFStar\tools\extraction.dll</HintPath>
     </Reference>
+    <Reference Include="FSharp.Data, Version=3.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>packages\FSharp.Data\lib\net45\FSharp.Data.dll</HintPath>
+    </Reference>
     <Reference Include="FSharp.PPrint, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>packages\ZFStar\tools\FSharp.PPrint.dll</HintPath>
     </Reference>
@@ -63,6 +66,7 @@
     <Compile Include="ModifyAST.fs" />
     <Compile Include="WitheredAST.fs" />
     <Compile Include="ExtractParams.fs" />
+    <Compile Include="ViewFile.fs" />
     <Compile Include="Program.fs" />
     <Content Include="paket.references" />
   </ItemGroup>

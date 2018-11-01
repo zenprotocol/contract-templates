@@ -9,12 +9,16 @@ open ViewFile
 let ERR_MSG_UNSPECIFIED_CONTRACT =
     "Error - Contract file wasn't specified"
 let ERR_MSG_FILE_NOT_FOUND : Printf.StringFormat<string -> string,string> =
-    "Error - File not found:\n %s"
+    "Error - File not found:\n%s"
 let ERR_MSG_PARSING_FAILED : Printf.StringFormat<string -> string,string> =
-    "Error - Parsing failed for file:\n %s"
+    "Error - Parsing failed for file:\n%s"
 let ERR_MSG_INVALID_VIEW_FILE =
     "Error - Invalid view file"
 
+let MSG_GENERATED_CONTRACT_TO_FILE : Printf.StringFormat<string -> string,string> =
+    "Generated contract to file:\n%s" 
+let MSG_EXTRACTED_VIEW_TO_FILE : Printf.StringFormat<string -> string,string> =
+    "Extracted view to file:\n%s" 
 
 type OutputStream =
     | Stdout
@@ -27,7 +31,7 @@ type Command_Write = {
 }
 
 
-type CLIArgs =
+type CLIArg =
     | [<CliPrefix(CliPrefix.None)>]
         Extract of ParseResults<ExtractArgs>
     | [<CliPrefix(CliPrefix.None)>]
@@ -79,7 +83,7 @@ with interface IArgParserTemplate with
             | V(_)           -> "Name of the view (.json) file to take the parameters from.\n"
                               + "If this argument isn't specified the parameters will be taken from stdin"
 
-let cli_parser      = ArgumentParser.Create<CLIArgs>()
+let cli_parser      = ArgumentParser.Create<CLIArg>()
 let extract_parser  = ArgumentParser.Create<ExtractArgs>()
 let modify_parser   = ArgumentParser.Create<ModifyArgs>()
 let generate_parser = ArgumentParser.Create<GenerateArgs>()
@@ -94,13 +98,13 @@ let with_file (filename : string) : Result<unit, string> =
         then Result.Ok ()
         else Result.Error <| sprintf ERR_MSG_FILE_NOT_FOUND filename
 
-let tryparse (filename : string) : Result<ASTUtils.AST, string> =
+let try_parse (filename : string) : Result<ASTUtils.AST, string> =
     try 
         Result.Ok <| ASTUtils.parse_file filename
     with _ ->
         Result.Error <| sprintf ERR_MSG_PARSING_FAILED filename  
 
-let handle_extract_args (args : ParseResults<ExtractArgs>) : Result<Command_Write, string> =
+let handle_extract_args (args : ParseResults<ExtractArgs>) : Result<Command_Write list, string> =
     if args.GetAllResults() |> List.isEmpty
         then
             Result.Error <| extract_usage()
@@ -113,25 +117,28 @@ let handle_extract_args (args : ParseResults<ExtractArgs>) : Result<Command_Writ
                 result {
                     let  filename      = System.IO.Path.GetFileName src_filename
                     let  contract_name = System.IO.Path.GetFileNameWithoutExtension src_filename
-                    let! ast           = tryparse src_filename
+                    let! ast           = try_parse src_filename
                     let  vf            = ViewFile.extractViewFile filename contract_name ast
                     let  json          = ViewFile.renderViewFile vf
                     return
-                        { content = json
-                        ; stream = 
-                            match args.TryGetResult ExtractArgs.V with
-                            | None ->
-                                OutputStream.Stdout
-                            | Some view_filename ->
-                                OutputStream.File view_filename
-                        }
+                        match args.TryGetResult ExtractArgs.V with
+                        | None ->
+                            [{ content = json; stream = Stdout}]
+                        | Some view_filename ->
+                            [{
+                                content = json
+                                stream  = File view_filename
+                            };
+                            {
+                                content = sprintf MSG_EXTRACTED_VIEW_TO_FILE view_filename
+                                stream  = Stdout
+                            }]
                 }
 
-
-let handle_modify_args (args : ParseResults<ModifyArgs>) : Result<Command_Write, string> =
+let handle_modify_args (args : ParseResults<ModifyArgs>) : Result<Command_Write list, string> =
     Result.Error "TODO : Implement modify"
 
-let handle_generate_args (args : ParseResults<GenerateArgs>) : Result<Command_Write, string> =
+let handle_generate_args (args : ParseResults<GenerateArgs>) : Result<Command_Write list, string> =
     if args.GetAllResults() |> List.isEmpty
         then
             Result.Error <| generate_usage()
@@ -160,7 +167,7 @@ let handle_generate_args (args : ParseResults<GenerateArgs>) : Result<Command_Wr
                     Result.Ok src_filename
             
             let! src_ast =
-                tryparse src_filename
+                with_file src_filename >>= fun() -> try_parse src_filename
             
             let pars = vf._parameters
             
@@ -169,10 +176,13 @@ let handle_generate_args (args : ParseResults<GenerateArgs>) : Result<Command_Wr
                 
             let dst_filename = vf._filename
             
-            return { content = ASTUtils.ast_to_string dst_ast; stream = OutputStream.File dst_filename }
+            return
+                [ { content = ASTUtils.ast_to_string dst_ast; stream = OutputStream.File dst_filename }
+                ; { content = sprintf MSG_GENERATED_CONTRACT_TO_FILE dst_filename; stream = OutputStream.Stdout }
+                ]
             }
 
-let handle_cli_arg arg =
+let handle_cli_arg (arg : CLIArg) : Result<Command_Write list, string> =
     match arg with
     | Extract(args)  -> handle_extract_args  args
     | Modify(args)   -> handle_modify_args   args
@@ -192,7 +202,7 @@ let cmd_write (cw : Command_Write) : unit =
 let rec cmd_writeall (cws : Command_Write list) : unit =
     match cws with
     | []       -> ()
-    | hd :: tl -> cmd_writeall tl; cmd_write hd
+    | hd :: tl -> cmd_write hd; cmd_writeall tl
 
 [<EntryPoint>]
 let main argv =
@@ -202,7 +212,7 @@ let main argv =
         let args = results.GetAllResults()
         match handle_cli_args args with 
         | Result.Ok cws ->
-            cmd_writeall cws
+            cmd_writeall (List.concat cws)
             0
         | Result.Error err ->
              printfn "%s" err

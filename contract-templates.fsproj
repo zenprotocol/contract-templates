@@ -64,15 +64,12 @@
     <Compile Include="ASTUtils.fs" />
     <Compile Include="ParametersData.fs" />
     <Compile Include="ModifyAST.fs" />
+    <Compile Include="ResultUtil.fs" />
     <Compile Include="WitheredAST.fs" />
     <Compile Include="ExtractParams.fs" />
     <Compile Include="ViewFile.fs" />
     <Compile Include="Program.fs" />
     <Content Include="paket.references" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="CompareAST.fsx" />
-    <None Include="ExtractParams.fsx" />
   </ItemGroup>
   <Import Project="$(FSharpTargetsPath)" Condition="Exists('$(FSharpTargetsPath)')" />
   <Choose>

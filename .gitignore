@@ -3,8 +3,15 @@ obj
 packages
 
 .idea
-.paket/paket.exe
 .paket/Paket.Restore.targets
+.paket/load
 paket-files
 
+contract-templates.sln.DotSettings.user
+
+src/.vs/contract-templates/xs/UserPrefs.xml
+
 *.nupkg
+*.tgz
+
+/package/Release

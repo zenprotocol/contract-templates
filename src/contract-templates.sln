@@ -2,7 +2,7 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".paket", ".paket", "{A98D7A9F-6F6A-4F90-9DFD-0108096F4D39}"
 	ProjectSection(SolutionItems) = preProject
-		paket.dependencies = paket.dependencies
+		..\paket.dependencies = ..\paket.dependencies
 	EndProjectSection
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "contract-templates", "contract-templates.fsproj", "{CBBF760E-8B5A-41BF-9F1A-330FB642FDC0}"

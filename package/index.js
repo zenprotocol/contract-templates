@@ -1,9 +1,10 @@
 const proc = require('child_process');
 const path = require('path');
 
+const programPath = path.join(__dirname, '/Release/contract-templates.exe');
+
 function start(args, dirname = __dirname) {
-    const programPath = path.join(dirname, '/Release/contract-templates.exe');
-    const workingDirectory = path.join(dirname,'Release');
+    // const workingDirectory = path.join(dirname,'Release');
     if (args === undefined)
         args = [];
 
@@ -15,11 +16,11 @@ function start(args, dirname = __dirname) {
         let mono = process.platform == 'darwin' ? '/Library/Frameworks/Mono.framework/Versions/Current/Commands/mono' : 'mono'
 
         contractTemplate = proc.spawn(mono, args,{
-            cwd: workingDirectory
+          //  cwd: workingDirectory
         });
     } else {
         contractTemplate = proc.spawn(programPath, args,{
-            cwd: workingDirectory
+           // cwd: workingDirectory
         });
     }
 

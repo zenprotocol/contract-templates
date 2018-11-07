@@ -1,10 +1,10 @@
 {
-  "author":"Zen Protocol",
-  "name":"@zen/contract-templates",
-  "version":"0.0.1",
-  "main":"index.js",
+  "author": "Zen Protocol",
+  "name": "@zen/contract-templates",
+  "version": "0.0.1",
+  "main": "index.js",
   "bin": {
-    "contract-template":"contract-template.js"
+    "contract-template": "contract-template.js"
   },
   "homepage": "https://github.com/zenprotocol/contract-templates"
 }
